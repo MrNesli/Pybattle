@@ -1,7 +1,8 @@
 from typing import Callable
 
+from src.types_ import Attacker, Creature, Defender, ElementReference
+
 from .element import Element
-from types_ import Attacker, Creature, Defender, ElementReference
 
 
 class StatusAilment:
@@ -14,9 +15,9 @@ class StatusAilment:
     ) -> None:
         self.element = Element.convert_element_references([element])
         self.function = function
-        
+
     def __repr__(self) -> str:
-        return str([name for name, obj in globals().items() if id(obj) == id(self)])
+        return function.__name__.capitalize()
 
     def affect(self, creature: Creature) -> None:
         """Cause a negative effect on a Creature."""

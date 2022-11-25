@@ -1,7 +1,7 @@
-from typing import Callable
 from random import choices
+from typing import Callable
 
-from types_ import Creature
+from src.types_ import Creature
 
 
 class Trait:
@@ -41,7 +41,7 @@ class Trait:
         self.function = function
 
         Trait.traits.append(self)
-        
+
     def __repr__(self) -> str:
         return self.name
 

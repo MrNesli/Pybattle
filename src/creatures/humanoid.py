@@ -1,8 +1,7 @@
 from typing import Any
 
-from types_ import Armor, Weapon
-
-from .pymon import Pymon
+from src.creatures.pymon import Pymon
+from src.types_ import Armor, Weapon
 
 
 class Humanoid(Pymon):

@@ -5,15 +5,13 @@ from random import choice, choices, randint
 from string import ascii_letters, digits
 from typing import Any, Self, TypeVar
 
-from .attributes.element import Element
-from .attributes.stats import Stats
-from .attributes.trait import Trait
-
-from log import FileLogger
-from types_ import (Ability, Creature, ElementReference, Item, Move,
-                    StatusAilment, Humanoid)
-
-logger = FileLogger('creatures')
+from src.creatures.attributes.element import Element
+from src.creatures.attributes.stats import Stats
+from src.creatures.attributes.trait import Trait
+from src.log import logger
+from src.types_ import (Ability, Creature, ElementReference, Humanoid, Item,
+                           Move, StatusAilment)
+from src.window.screen import Color
 
 
 class ID:
@@ -61,7 +59,7 @@ class Pymon:
             cls.leveling_moves: dict[int, Move] = {}
 
         if 'bases' not in cls.__dict__:
-            cls.bases: dict[str, float] = {}
+            cls.bases: dict[str, int] = {}
 
         if 'elements' not in cls.__dict__:
             cls.elements: list[ElementReference] = []
@@ -146,9 +144,9 @@ class Pymon:
         self.max_experience = self.STARTING_MAX_XP
         self.level: int = 1
         self.level_to(dct.get('starting_level', self.STARTING_LEVEL))
-        
+
         self.debug()
-        
+
     def debug(self) -> None:
         """Debug all the stats."""
         logger.debug(str(self.__dict__))
@@ -161,9 +159,9 @@ class Pymon:
         self,
         stat: str,
         bar_amount: int = 20,
-        high_color='\u001b[32m',
-        medium_color='\u001b[33m',
-        low_color='\u001b[31m'
+        high_color=Color.GREEN,
+        medium_color=Color.YELLOW,
+        low_color=Color.RED,
     ) -> str:
         """Get a percentage bar.
 
@@ -185,6 +183,7 @@ class Pymon:
 
         percent = self.stats[stat].value / self.max_stats[stat].value
 
+        color = ''
         if percent >= 2/3:
             color = high_color
         elif percent >= 1/3:

@@ -34,9 +34,9 @@ class Stat:
         self.level_point = level_point
         self.special_point = special_point
         self.skill_point = skill_point
-        self.bonus = 0
-        self.battle_bonus = 0
-        
+        self.bonus = 0.0
+        self.battle_bonus = 0.0
+
     def __repr__(self) -> str:
         return str(self.value) + ';' + str(self.battle_bonus)
 
@@ -57,20 +57,23 @@ class Stats:
         skill_points: dict[str, int] = {},
     ) -> None:
         self.stats = {stat: Stat(
-            bases.get(stat, ...),
-            level_points.get(stat, ...),
-            special_points.get(stat, ...),
-            skill_points.get(stat, ...)
+            bases.get(stat, ...),  # type: ignore
+            level_points.get(stat, ...),  # type: ignore
+            special_points.get(stat, ...),  # type: ignore
+            skill_points.get(stat, ...)  # type: ignore
         ) for stat in self.STATS}
-        
+
         self.bases = {key: value.base for key, value in self.stats.items()}
         self.total = sum(bases.values())
-        self.level_points = {key: value.level_point for key, value in self.stats.items()}
-        self.special_points = {key: value.special_point for key, value in self.stats.items()}
-        self.skill_points = {key: value.skill_point for key, value in self.stats.items()}
-        
+        self.level_points = {
+            key: value.level_point for key, value in self.stats.items()}
+        self.special_points = {
+            key: value.special_point for key, value in self.stats.items()}
+        self.skill_points = {
+            key: value.skill_point for key, value in self.stats.items()}
+
     def __repr__(self) -> str:
         return f'Stats({self.stats})'
-        
-    def __getitem__(self, key: str) -> None:
+
+    def __getitem__(self, key: str) -> Stat:
         return self.stats[key]

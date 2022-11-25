@@ -2,10 +2,8 @@ from __future__ import annotations
 
 from typing import Sequence
 
-from log import FileLogger
-from types_ import ElementReference
-
-logger = FileLogger()
+from src.log import logger
+from src.types_ import ElementReference
 
 
 class Element:
@@ -39,7 +37,7 @@ class Element:
         self.resistances = resistances
 
         Element.elements[self.name] = self
-        
+
     def __repr__(self) -> str:
         return self.name.capitalize()
 
@@ -61,7 +59,3 @@ class Element:
         if mult == 1/4:
             return 0
         return mult
-
-
-# Body	(for pokemon)	Plant	Insect	Bird	Fairy	Fish	Mineral	Angel									
-# Element	(for moves)	Wind	Earth	Fire	Ice	Gamma	Lightning	Shadow	Night	Sea	Nature	Crystal	Sound	Cosmic	Tech	Day	Metal

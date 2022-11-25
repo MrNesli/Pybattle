@@ -2,7 +2,7 @@ from __future__ import annotations
 
 from typing import Callable
 
-from types_ import Attacker, Creature, Defender, User
+from src.types_ import Attacker, Creature, Defender, User
 
 
 class Ability:
@@ -17,10 +17,10 @@ class Ability:
         self.function = function
         self.condition = condition
         self.activations = activations
-        
+
     def __repr__(self) -> str:
         return self.function.__name__.capitalize()
-    
+
     def activate(
         self,
         user: User,
