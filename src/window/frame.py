@@ -1,39 +1,38 @@
+from src.types_ import CoordReference, SizeReference
 from src.window.coord import Coord, CoordList
 from src.window.matrix import Matrix
 from src.window.size import Size
-from src.types_ import SizeReference, CoordReference
+
 from .screen import Cursor
 
 
 class Frame:
     """Get box chars here: https://en.wikipedia.org/wiki/Box-drawing_character"""
+
     def __init__(
         self,
         size: SizeReference
     ) -> None:
         self.size = Size.convert_reference(size)
 
-        self.width = self.size.width
-        self.height = self.size.height
-
         self._update_frame()
 
     @property
     def width(self) -> int:
-        return self._width
+        return self.size.width
 
     @width.setter
     def width(self, to: int):
-        self._width = to
+        self.size.width = to
         self._update_frame()
 
     @property
     def height(self) -> int:
-        return self._width
+        return self.size.height
 
     @height.setter
     def height(self, to: int):
-        self._height = to
+        self.size.height = to
         self._update_frame()
 
     @property
@@ -99,51 +98,58 @@ class Frame:
         pos: CoordReference = Coord(0, 0),
     ) -> None:
         pos = Coord.convert_reference(pos)
-        top_left = pos
 
+        out_of_boundaries_step_x = (
+            self.top_right_corner - (pos + frame.size.size)).x
+        out_of_boundaries_step_y = (
+            self.bottom_left_corner - (pos + frame.size.size)).y
+
+        if out_of_boundaries_step_x <= 0:
+            limit = 1 if out_of_boundaries_step_x < 0 else abs(
+                out_of_boundaries_step_x)
+            frame.width -= limit
+
+        if out_of_boundaries_step_y <= 0:
+            limit = 1 if out_of_boundaries_step_y < 0 else abs(
+                out_of_boundaries_step_y)
+            frame.height -= limit
+
+        top_left = pos
         top_right = pos + frame.top_right_corner
         bottom_left = pos + frame.bottom_left_corner
         bottom_right = pos + frame.bottom_right_corner
 
-        result = str(self.matrix)
+        if self.top_edge_positions in top_left:
+            self.matrix[*top_left.reverse] = '┬'
+        elif self.left_edge_positions in top_left:
+            self.matrix[*top_left.reverse] = '├'
 
-        result += Cursor.move(pos).code
+        if self.top_edge_positions in top_right:
+            self.matrix[*top_right.reverse] = '┬'
+        elif self.right_edge_positions in top_right:
+            self.matrix[*top_right.reverse] = '┤'
 
-        if top_left in self.top_edge_positions:
-            frame.matrix[*top_left.reverse] = '┬'
-        elif top_left in self.left_edge_positions:
-            frame.matrix[*top_left.reverse] = '├'
+        if self.bottom_edge_positions in bottom_left:
+            self.matrix[*bottom_left.reverse] = '┬'
+        elif self.left_edge_positions in bottom_left:
+            self.matrix[*bottom_left.reverse] = '├'
 
-        if top_right in self.top_edge_positions:
-            frame.matrix[*top_right.reverse] = '┬'
-        elif top_right in self.right_edge_positions:
-            frame.matrix[*top_right.reverse] = '┤'
+        if self.bottom_edge_positions in bottom_right:
+            self.matrix[*bottom_right.reverse] = '┬'
+        if self.right_edge_positions in bottom_right:
+            self.matrix[*bottom_right.reverse] = '┤'
 
-        if bottom_left in self.top_edge_positions:
-            frame.matrix[*bottom_left.reverse] = '┴'
-        elif bottom_left in self.left_edge_positions:
-            frame.matrix[*bottom_left.reverse] = '├'
+        frame_slice = frame[
+            0: pos.y + frame.height,
+            0: pos.x + frame.width
+        ]
 
-        if bottom_right in self.top_edge_positions:
-            frame.matrix[*bottom_right.reverse] = '┴'
-        elif bottom_right in self.right_edge_positions:
-            frame.matrix[*bottom_right.reverse] = '┤'
+        for y in range(0, frame.height):
+            for x in range(0, frame.width):
+                if self.matrix[y + pos.y, x + pos.x] == ' ':
+                    self.matrix[y + pos.y, x + pos.x] = frame_slice[y, x]
 
-        result += str(frame.matrix)
-        
-        # TEST
-        # length = set()
-        # for line in result.splitlines(True):
-        #     valid = True
-        #     length.add(len(line))
-        #     if len(length) > 1:
-        #         print(line)
-        #         valid = False
-
-        #     print(valid)
-
-        print(result)
-        self.matrix = Matrix(result)
+        print(Matrix.convert_array(self.matrix))
 
 
 class Window(Frame):
